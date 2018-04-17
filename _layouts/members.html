@@ -2,7 +2,40 @@
 layout: default
 is_secondary_navigation: true
 ---
+<script type="text/javascript">
+const database = firebase.firestore();
 
+database.collection("organisations").orderBy("name").get().then(function(orgs) {
+    document.querySelector('#numMembers').innerHTML = "OpenActive has " + orgs.size + " members.";
+    orgs.forEach(function(org) {
+        var hrNode = document.createElement("hr");
+        var orgNode = document.createElement("div");
+        var data = org.data();
+        orgNode.className = 'subgrid'
+        orgNode.innerHTML = 
+                '<figure role="group" class="two tworight">' +
+                    '<img role="logo" src='+data.logo+'>' +
+                '</figure>' +
+                '<div class="two tworight">' +
+                    '<div class="wrap">' +
+                       '<h5><a class="post-title post-link" href="'+data.url+'" rel="noopener" target="_blank">' +
+                        data.name +
+                        '</a></h5>' +
+                            '<p>'+data.description +'</p>' + 
+                             
+                    '</div>' +
+                    '<a class="link" href="'+data.url+'" rel="noopener" target="_blank">Visit Website</a>' +
+                '</div>';
+        document.querySelector('#orgs').appendChild(orgNode)
+        document.querySelector('#orgs').appendChild(hrNode)
+        console.log(org.data());
+    });
+    document.querySelector(".loading").style.cssText = "display:none";
+    document.querySelector(".loading-hide").style.cssText =
+              "display:grid";
+});
+
+</script>    
 <div class="page" id="members-page">
     <article class="page-content">
         <div class="one">
@@ -13,45 +46,18 @@ is_secondary_navigation: true
         </div>
     </article>
 
-    {% if site.members %}
-    {% for post in site.members %}
-    {% assign num = forloop.length %}
-    {% endfor %}
+    <article class="loading"><div class="three"><h2>Loading...</h2></div></article>
 
-
-    <article class="member-list">
+    <article class="member-list loading-hide">
         <div class="one">
-            <h3>OpenActive has {{num}} members.</h3>
+            <h3 id="numMembers"></h3>
         </div>
-        <div class="one">
-
-            {% assign sortedPosts = site.members | sort: 'title' %}
-            {% for post in sortedPosts %}
-            <div class="subgrid" id="member-{{ forloop.index }}">
-                <figure role="group" class="two tworight">
-                    <img role="logo" src="{{post.thumbnail_image | relative_url}}">
-                </figure>
-                <div class="two tworight">
-                    <div class="wrap">
-                        <h5><a class="post-title post-link" href="{{ post.website }}" rel="noopener" target="_blank">{{
-                            post.title |
-                            escape
-                            }}</a></h5>
-                            <p></p>
-                        {{ post.content }}
-                    </div>
-                    <a class="link" href="{{ post.website }}" rel="noopener" target="_blank">Visit Website</a>
-                </div>
-            </div>
-            <hr>
-            {% endfor %}
-
+        <div class="one" id="orgs">
         </div>
     </article>
 
 
     </aside>
-    {% endif %}
 
 
 </div>
