@@ -28,7 +28,6 @@ database.collection("organisations").orderBy("name").get().then(function(orgs) {
                 '</div>';
         document.querySelector('#orgs').appendChild(orgNode)
         document.querySelector('#orgs').appendChild(hrNode)
-        console.log(org.data());
     });
     document.querySelector(".loading").style.cssText = "display:none";
     document.querySelector(".loading-hide").style.cssText =
